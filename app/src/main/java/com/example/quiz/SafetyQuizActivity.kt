@@ -11,11 +11,15 @@ import com.example.quiz.Fragment.SafetyOneFragment
 
 class SafetyQuizActivity : AppCompatActivity(), SafetyOneFragment.SafetyOneFragmentChangeListener {
 
+    var questionlist:ArrayList<SafetyQuizClass>?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_safety_file)
 
         val iab = intent.getIntExtra("quizquestion", 0)
+        // val args:Bundle=intent.getBundleExtra("Bundle")
+        questionlist=intent.getParcelableArrayListExtra<SafetyQuizClass>("quizquestionlist")
         val fragment=SafetyOneFragment()
         supportFragmentManager.beginTransaction().replace(R.id.safety_id,fragment).setTransition(FragmentTransaction.TRANSIT_NONE).addToBackStack(null).commit()
 //        val frag = SafetyOneFragment()
@@ -31,7 +35,14 @@ class SafetyQuizActivity : AppCompatActivity(), SafetyOneFragment.SafetyOneFragm
     override fun itemClicked(id: Int) {
         val fragment=SafetyOneFragment()
         fragment.idQuiz=id
+        fragment.questionlist=questionlist!!.get(id)
         supportFragmentManager.beginTransaction().replace(R.id.safety_id,fragment).setTransition(FragmentTransaction.TRANSIT_NONE).addToBackStack(null).commit()
-        Log.d("working", "oh yea $id")
+        Log.d("working", "oh yea "+questionlist!!.get(id))
     }
+
+    override fun takedataback(id:Int): SafetyQuizClass {
+        return questionlist!!.get(id)
+    }
+
+
 }

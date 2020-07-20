@@ -5,6 +5,10 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 29
 
+    androidExtensions {
+        experimental = true
+    }
+
     defaultConfig {
         applicationId "com.example.quiz"
         minSdkVersion 19
