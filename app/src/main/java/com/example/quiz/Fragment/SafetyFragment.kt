@@ -1,10 +1,11 @@
-package org.gripp.android.gripp.fragments.SafetyFragment
+package com.example.quiz.Fragment.SafetyFragment
 
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.AppCompatButton
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import com.example.quiz.SafetyQuizClass
 import com.example.quiz.utils.Constants
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.Serializable
 
 /**
  * Created by harshgupta on 30/12/17.
@@ -31,22 +33,22 @@ class SafetyFragment : Fragment() {
     var lSharedPreferences: SharedPreferences?=null
     var textId: TextView? = null
     var raised_btn:AppCompatButton?=null
-    var safetyQuizClass:ArrayList<SafetyQuizClass>? = null
+    var safetyQuizClass:ArrayList<SafetyQuizClass>? = ArrayList()
     var loading: ProgressDialog? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_safety_one, container, false)
-       // SafetyQuizClass.safetyQuizClass!!.clear()
+        // SafetyQuizClass.safetyQuizClass!!.clear()
         textId=rootView.findViewById(R.id.text_id)
         raised_btn=rootView.findViewById(R.id.raised_btn)
         lSharedPreferences = activity!!.getSharedPreferences(Constants.USER_INFO_PREFERENCE, Context.MODE_PRIVATE)
 
         raised_btn!!.setOnClickListener {
-            raisedbtn()
+            raisedbtn(safetyQuizClass!!)
         }
 
-     getItems()
+        getItems()
 
         println(">>>>>>>>> safety quiz in safety fragment" +  safetyQuizClass)
 
@@ -54,11 +56,17 @@ class SafetyFragment : Fragment() {
     }
 
 
-    fun raisedbtn() {
+    fun raisedbtn(safetyQuizClass:ArrayList<SafetyQuizClass>) {
         lSharedPreferences!!.edit().putInt(Constants.safetyanswerString, 0).commit()
         lSharedPreferences!!.edit().putBoolean(Constants.setAnswer, false).commit()
+
+        //bundle to send arraydata all questions
+        //var bundle:Bundle=Bundle()
+        //bundle.putSerializable("quizquestionlist",safetyQuizClass as Serializable)
+        Log.d("data",safetyQuizClass.toString())
         val i = Intent(activity, SafetyQuizActivity::class.java)
         i.putExtra("quizquestion", 0)
+        i.putParcelableArrayListExtra("quizquestionlist",ArrayList(safetyQuizClass))
         startActivity(i)
     }
 
@@ -80,7 +88,7 @@ class SafetyFragment : Fragment() {
     }
 
     private fun getItems() {
-         loading = ProgressDialog.show(activity, "Loading", "please wait", false, true)
+        loading = ProgressDialog.show(activity, "Loading", "please wait", false, true)
         val stringRequest = StringRequest(
             Request.Method.GET,
             //"https://script.google.com/macros/s/AKfycbzxiC0ndPDRi72Vum8fuyBO2I6i4cDkF1-OK9a-2l_EeBtDzxTX/exec?action=getItems",
@@ -93,7 +101,9 @@ class SafetyFragment : Fragment() {
                 }
             },
             object : Response.ErrorListener {
-                override fun onErrorResponse(error: VolleyError?) {}
+                override fun onErrorResponse(error: VolleyError?) {
+                    Log.d("error",error.toString())
+                }
             }
         )
         val socketTimeOut = 50000
@@ -107,6 +117,7 @@ class SafetyFragment : Fragment() {
     // for quiz
     private fun parseItems(jsonResposnce: String) {
         // val list: ArrayList<HashMap<String, String?>> = ArrayList()
+        Log.d("parsestring",jsonResposnce)
         try {
             val jobj = JSONObject(jsonResposnce)
             val jarray = jobj.getJSONArray("quiz")
@@ -129,6 +140,7 @@ class SafetyFragment : Fragment() {
 //                item["answer"] = answer
                 // item["price"] = price
                 //list.add(item)
+                Log.d("safetyQuizClass1",safetyQuizClass1.option_a)
                 safetyQuizClass!!.add(safetyQuizClass1)
             }
         } catch (e: JSONException) {
@@ -138,6 +150,6 @@ class SafetyFragment : Fragment() {
 //        val result = "result"
 //        // Use the Kotlin extension in the fragment-ktx artifact
 //        setFragmentResult("requestKey", bundleOf("bundleKey" to result))
-         loading!!.dismiss()
+        loading!!.dismiss()
     }
 }

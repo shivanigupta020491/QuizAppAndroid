@@ -18,6 +18,7 @@ import com.android.volley.*
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.quiz.R
+import com.example.quiz.SafetyQuizActivity
 import com.example.quiz.SafetyQuizClass
 
 import com.example.quiz.utils.Constants.USER_INFO_PREFERENCE
@@ -41,10 +42,12 @@ class SafetyOneFragment : Fragment() {
     var alertDialog: AlertDialog? = null
     var builder: AlertDialog.Builder? = null
     var question: TextView? = null
+    var questionlist: SafetyQuizClass?=null
     protected var mSharedPreferences: SharedPreferences? = null
 
     interface SafetyOneFragmentChangeListener {
         fun itemClicked(id: Int)
+        fun takedataback(id: Int):SafetyQuizClass
     }
 
     private var listener: SafetyOneFragmentChangeListener? = null
@@ -60,7 +63,7 @@ class SafetyOneFragment : Fragment() {
             Context.MODE_PRIVATE
         )
         builder = AlertDialog.Builder(activity)
-        getItems()
+        //listener!!.itemClicked(0)
         return rootView
     }
 
@@ -75,50 +78,57 @@ class SafetyOneFragment : Fragment() {
             option2 = view.findViewById(R.id.radioGroup2_id)
             option3 = view.findViewById(R.id.radioGroup3_id)
             option4 = view.findViewById(R.id.radioGroup4_id)
-
-       //final SafetyQuizClass safetyQuizClass= SafetyQuizClass.Companion.getSafetyQuizClass()[(int) id];
-        val safetyQuizClass = safetyQuizClass!!.get(idQuiz)
+            if(questionlist==null){
+                questionlist= listener!!.takedataback(0)
+                Log.d("check",questionlist!!.question)
+            }else{
+                //questionlist= listener!!.takedataback(0)
+                Log.d("check","wrong")
+                Log.d("check",questionlist.toString())
+            }
+            //final SafetyQuizClass safetyQuizClass= SafetyQuizClass.Companion.getSafetyQuizClass()[(int) id];
+            //val safetyQuizClass = safetyQuizClass!!.get(idQuiz)
             //final SafetyQuizClass safetyQuizClass = SafetyQuizClass
-            question!!.setText(safetyQuizClass.question)
-            option1!!.setText(safetyQuizClass.option_a)
-            option2!!.setText(safetyQuizClass.option_b)
-            option3!!.setText(safetyQuizClass.option_c)
-            option4!!.setText(safetyQuizClass.option_d)
+            question!!.setText(questionlist!!.question)
+            option1!!.setText(questionlist!!.option_a)
+            option2!!.setText(questionlist!!.option_b)
+            option3!!.setText(questionlist!!.option_c)
+            option4!!.setText(questionlist!!.option_d)
             answer!!.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { group, checkedId ->
                 id_one = checkedId
                 button!!.setEnabled(true)
             })
             button!!.setOnClickListener(View.OnClickListener {
                 when (id_one) {
-                    R.id.radioGroup1_id -> if ("a" === safetyQuizClass.choice) {
+                    R.id.radioGroup1_id -> {
+                        if ("a".equals(questionlist!!.choice.trim())) {
+                            safetydialogbox(true, "awesome")
+                        } else {
+                            safetydialogbox(false, questionlist!!.choice)
+                        }
+                    }
+                    R.id.radioGroup2_id -> if ("b".equals(questionlist!!.choice.trim())) {
                         safetydialogbox(true, "awesome")
                     } else {
-                        safetydialogbox(false, safetyQuizClass.choice)
+                        safetydialogbox(false, questionlist!!.choice)
                     }
-                    R.id.radioGroup2_id -> if ("b" === safetyQuizClass.choice) {
+                    R.id.radioGroup3_id -> if ("c".equals(questionlist!!.choice.trim())) {
                         safetydialogbox(true, "awesome")
                     } else {
-                        safetydialogbox(false, safetyQuizClass.choice)
+                        safetydialogbox(false, questionlist!!.choice)
                     }
-                    R.id.radioGroup3_id -> if ("c" === safetyQuizClass.choice) {
+                    R.id.radioGroup4_id -> if ("d".equals(questionlist!!.choice.trim())) {
                         safetydialogbox(true, "awesome")
                     } else {
-                        safetydialogbox(false, safetyQuizClass.choice)
+                        safetydialogbox(false, questionlist!!.choice)
                     }
-                    R.id.radioGroup4_id -> if ("d" === safetyQuizClass.choice) {
-                        safetydialogbox(true, "awesome")
-                    } else {
-                        safetydialogbox(false, safetyQuizClass.choice)
-                    }
-                    else -> safetydialogbox(false, safetyQuizClass.choice)
+                    else -> safetydialogbox(false, questionlist!!.choice.trim())
                 }
             })
         }
     }
 
-    fun setId(id: Int) {
-        this.idQuiz = id
-    }
+
 
     fun safetydialogbox(a: Boolean, b: String) {
         Log.d("working", "yes i ama $a")
@@ -151,69 +161,13 @@ class SafetyOneFragment : Fragment() {
         }.show()
     }
 
-    override fun onAttach(activity: Activity) {
-        super.onAttach(activity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         Log.d("working", "OOOO")
         listener = activity as SafetyOneFragmentChangeListener
     }
 
-    private fun getItems() {
-        //    loading = ProgressDialog.show(this, "Loading", "please wait", false, true)
-        val stringRequest = StringRequest(
-            Request.Method.GET,
-            //"https://script.google.com/macros/s/AKfycbzxiC0ndPDRi72Vum8fuyBO2I6i4cDkF1-OK9a-2l_EeBtDzxTX/exec?action=getItems",
-
-            //url for quiz
-            "https://script.google.com/macros/s/AKfycbwTMAWny9KC220V5Pi4cR0WkwJAVvDPEHmkwLVG3aooH4e3JRg/exec?action=getItems",
-            object : Response.Listener<String?> {
-                override fun onResponse(response: String?) {
-                    parseItems(response!!)
-                }
-            },
-            object : Response.ErrorListener {
-                override fun onErrorResponse(error: VolleyError?) {}
-            }
-        )
-        val socketTimeOut = 50000
-        val policy: RetryPolicy =
-            DefaultRetryPolicy(socketTimeOut, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-        stringRequest.retryPolicy = policy
-        val queue = Volley.newRequestQueue(activity)
-        queue.add(stringRequest)
-    }
-
-    // for quiz
-    private fun parseItems(jsonResposnce: String) {
-        // val list: ArrayList<HashMap<String, String?>> = ArrayList()
-        try {
-            val jobj = JSONObject(jsonResposnce)
-            val jarray = jobj.getJSONArray("quiz")
-            for (i in 0 until jarray.length()) {
-                val jo = jarray.getJSONObject(i)
-                val question = jo.getString("question")
-                val option1 = jo.getString("option1")
-                val option2 = jo.getString("option2")
-                val option3 = jo.getString("option3")
-                val option4 = jo.getString("option4")
-                val answer = jo.getString("answer")
-                // val price = jo.getString("price")
-                //val item: HashMap<String, String?> = HashMap()
-                val safetyQuizClass1 = SafetyQuizClass(question,option1,option2,option3,option4,answer)
-//                item["question"] = question
-//                item["option1"] = option1
-//                item["option2"] = option2
-//                item["option3"] = option3
-//                item["option4"] = option4
-//                item["answer"] = answer
-                // item["price"] = price
-                //list.add(item)
-                safetyQuizClass!!.add(safetyQuizClass1)
-            }
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
 
 
-        // loading!!.dismiss()
-    }
+
 }
