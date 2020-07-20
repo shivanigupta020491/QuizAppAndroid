@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/question_id"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="50dp"
+        android:text="What is the question?"
+        />
+    <android.widget.RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioGroup_id"
+        android:layout_below="@+id/question_id"
+        >
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioGroup1_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello First Option"
+            android:layout_marginBottom="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioGroup2_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello First Option"
+            android:layout_marginBottom="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioGroup3_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello First Option"
+            android:layout_marginBottom="10dp"
+            />
+        <androidx.appcompat.widget.AppCompatRadioButton
+            android:id="@+id/radioGroup4_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello First Option"
+            android:layout_marginBottom="10dp"
+            />
+    </android.widget.RadioGroup>
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/enter_btn_id"
+        android:text="ENTER"
+        android:layout_below="@id/radioGroup_id"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:enabled="false"
+        />
+
+</RelativeLayout>

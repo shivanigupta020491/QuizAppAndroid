@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/readytotaketest_id"
+        android:text="Are You Ready To take test"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="10dp"
+        android:textSize="16dp"
+        />
+    <androidx.appcompat.widget.AppCompatButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/raised_btn"
+        android:text="ENTER"
+        android:layout_below="@id/readytotaketest_id"
+        android:layout_centerHorizontal="true"
+        style="@style/RaisedButton"
+        />
+    <TextView
+        android:id="@+id/text_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="18dp"
+        android:layout_below="@+id/raised_btn"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>
